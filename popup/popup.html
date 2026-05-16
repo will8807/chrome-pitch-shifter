@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>Pitch Shifter</h1>
+
+  <div class="row">
+    <input id="slider" type="range" min="-12" max="12" step="1" value="0">
+  </div>
+
+  <div class="row">
+    <label for="number">Semitones</label>
+    <input id="number" type="number" min="-12" max="12" step="1" value="0">
+    <button id="reset" title="Reset to 0">Reset</button>
+  </div>
+
+  <div id="status" class="status">Idle</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
