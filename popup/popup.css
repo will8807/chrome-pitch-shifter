@@ -37,11 +37,26 @@ label {
   font: inherit;
 }
 
+/* Hide native spinner arrows */
+#number::-webkit-inner-spin-button,
+#number::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#number { -moz-appearance: textfield; }
+
 button {
-  margin-left: auto;
-  padding: 3px 10px;
+  padding: 3px 8px;
   font: inherit;
   cursor: pointer;
+}
+
+#reset {
+  margin-left: auto;
+}
+
+#decr, #incr {
+  padding: 3px 7px;
 }
 
 .status {

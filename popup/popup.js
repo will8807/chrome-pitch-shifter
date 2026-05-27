@@ -1,5 +1,7 @@
 const slider = document.getElementById('slider');
 const number = document.getElementById('number');
+const decr = document.getElementById('decr');
+const incr = document.getElementById('incr');
 const reset = document.getElementById('reset');
 const statusEl = document.getElementById('status');
 
@@ -67,7 +69,17 @@ async function apply(value) {
 }
 
 slider.addEventListener('input', () => apply(slider.value));
+decr.addEventListener('click', () => apply(Number(slider.value) - 1));
+incr.addEventListener('click', () => apply(Number(slider.value) + 1));
+slider.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  apply(clamp(Number(slider.value) - Math.sign(e.deltaY)));
+}, { passive: false });
 number.addEventListener('change', () => apply(number.value));
+number.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  apply(clamp(Number(number.value) - Math.sign(e.deltaY)));
+}, { passive: false });
 reset.addEventListener('click', () => apply(0));
 
 init();

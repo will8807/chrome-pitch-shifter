@@ -41,16 +41,21 @@
       wired.set(el, { source, node });
       liveNodes.add(node);
       return true;
-    } catch (err) {
-      // Common: InvalidStateError if element already attached to another context,
-      // or SecurityError on cross-origin tainted media.
-      console.warn('[PitchShifter] failed to wire element', err);
+    } catch {
       return false;
     }
   }
 
   function findMediaElements() {
-    return Array.from(document.querySelectorAll('audio, video'));
+    const found = new Set();
+    function walk(root) {
+      for (const el of root.querySelectorAll('audio, video')) found.add(el);
+      for (const el of root.querySelectorAll('*')) {
+        if (el.shadowRoot) walk(el.shadowRoot);
+      }
+    }
+    walk(document);
+    return [...found];
   }
 
   async function applyToAll(semitones) {

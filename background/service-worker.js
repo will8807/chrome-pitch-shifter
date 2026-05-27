@@ -65,15 +65,21 @@ async function startTabCapture(tabId, semitones) {
       }
     );
   });
-  const resp = await chrome.runtime.sendMessage({
-    type: 'os:start',
-    streamId,
-    tabId,
-    semitones
-  });
-  if (!resp || !resp.ok) throw new Error(resp?.error || 'Offscreen failed to start');
-  // Mute the original tab so the user only hears the processed audio.
+  // Mute before starting playback so there is no window where both original
+  // and processed audio play simultaneously (audible as echo).
   await chrome.tabs.update(tabId, { muted: true });
+  try {
+    const resp = await chrome.runtime.sendMessage({
+      type: 'os:start',
+      streamId,
+      tabId,
+      semitones
+    });
+    if (!resp || !resp.ok) throw new Error(resp?.error || 'Offscreen failed to start');
+  } catch (err) {
+    await chrome.tabs.update(tabId, { muted: false }).catch(() => {});
+    throw err;
+  }
 }
 
 async function updateTabCapture(tabId, semitones) {
@@ -90,6 +96,13 @@ async function stopTabCapture(tabId) {
   await chrome.tabs.update(tabId, { muted: false }).catch(() => {});
 }
 
+function updateBadge(tabId, semitones) {
+  const text = semitones === 0 ? '' : (semitones > 0 ? `+${semitones}` : String(semitones));
+  chrome.action.setBadgeText({ text, tabId });
+  const color = semitones > 0 ? '#0077bb' : semitones < 0 ? '#ee7733' : '#888';
+  chrome.action.setBadgeBackgroundColor({ color, tabId });
+}
+
 async function applyPitch(tabId, semitones) {
   const prev = tabState.get(tabId);
 
@@ -97,6 +110,7 @@ async function applyPitch(tabId, semitones) {
   if (prev?.mode === 'capture') {
     await updateTabCapture(tabId, semitones);
     tabState.set(tabId, { mode: 'capture', semitones });
+    updateBadge(tabId, semitones);
     return { ok: true, mode: 'capture' };
   }
 
@@ -104,6 +118,7 @@ async function applyPitch(tabId, semitones) {
   const csResp = await tryContentScript(tabId, semitones);
   if (csResp && csResp.ok && csResp.mediaCount > 0) {
     tabState.set(tabId, { mode: 'content', semitones });
+    updateBadge(tabId, semitones);
     return { ok: true, mode: 'content' };
   }
 
@@ -111,6 +126,7 @@ async function applyPitch(tabId, semitones) {
   try {
     await startTabCapture(tabId, semitones);
     tabState.set(tabId, { mode: 'capture', semitones });
+    updateBadge(tabId, semitones);
     return { ok: true, mode: 'capture' };
   } catch (err) {
     return { ok: false, error: 'Tab capture failed: ' + err.message };
@@ -130,4 +146,5 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   const state = tabState.get(tabId);
   if (state?.mode === 'capture') stopTabCapture(tabId);
   tabState.delete(tabId);
+  chrome.action.setBadgeText({ text: '', tabId }).catch(() => {});
 });

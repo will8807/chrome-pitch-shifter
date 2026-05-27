@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pitch Shifter – Privacy Policy</title>
+  <style>
+    body { max-width: 680px; margin: 48px auto; padding: 0 24px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; color: #222; }
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Pitch Shifter – Privacy Policy</h1>
+  <p><em>Last updated: May 2026</em></p>
+
+  <h2>No data collection</h2>
+  <p>Pitch Shifter does not collect, record, transmit, or store any personal data or audio data. All audio processing is performed entirely on your device using the browser's built-in Web Audio API.</p>
+
+  <h2>No third parties</h2>
+  <p>The extension does not communicate with any external servers or third-party services. It contains no analytics, advertising SDKs, or remote code of any kind.</p>
+
+  <h2>Permissions</h2>
+  <p>The extension requests the following Chrome permissions solely to perform local audio pitch shifting:</p>
+  <ul>
+    <li><strong>tabCapture</strong> – captures the active tab's audio stream for local processing when direct element access is unavailable.</li>
+    <li><strong>activeTab / tabs</strong> – identifies which tab to pitch-shift and mutes it during capture to prevent audio doubling.</li>
+    <li><strong>scripting</strong> – injects a content script to wire page audio elements into a local Web Audio graph.</li>
+    <li><strong>storage</strong> – saves your pitch setting per tab within the current browser session only.</li>
+    <li><strong>offscreen</strong> – hosts the Web Audio processing context required by the service worker.</li>
+    <li><strong>webNavigation</strong> – enumerates sub-frames so embedded media players are also pitch-shifted.</li>
+  </ul>
+
+  <h2>Contact</h2>
+  <p>Questions? Email <a href="mailto:will8807@gmail.com">will8807@gmail.com</a></p>
+</body>
+</html>
